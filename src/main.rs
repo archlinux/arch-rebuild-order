@@ -20,18 +20,6 @@ fn find_package_anywhere<'a>(pkgname: &str, pacman: &'a alpm::Alpm) -> Result<Pa
     Err(alpm::Error::PkgNotFound)
 }
 
-fn get_reverse_deps<'a>(pkgname: &str, pacman: &'a alpm::Alpm) -> Result<Vec<String>, Error> {
-    let mut reverse_deps = vec![];
-    let dbs = pacman.syncdbs();
-    for db in dbs {
-        reverse_deps.extend(
-            db.pkgs().context("Unable to get packages")?.filter(
-                |pkg| pkg.depends().any(|dep| dep.name() == pkgname) || pkg.makedepends().any(|dep| dep.name() == pkgname)
-            ).map(|pkg| pkg.name().to_string()));
-    }
-    Ok(reverse_deps)
-}
-
 fn get_reverse_deps_map<'a>(pacman: &'a alpm::Alpm) -> Result<HashMap<String, Vec<String>>, Error> {
     let mut reverse_deps: HashMap<String, Vec<String>> = HashMap::new();
     let dbs = pacman.syncdbs();
