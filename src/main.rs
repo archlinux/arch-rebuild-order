@@ -1,9 +1,9 @@
-use std::collections::{VecDeque, HashMap};
+use std::collections::{VecDeque, HashMap, HashSet};
 
 use clap::{Arg, App};
 use alpm::{SigLevel, Package};
 use anyhow::{Context, Result, Error};
-use rayon::prelude::*;
+
 
 const ROOT_DIR: &str = "/";
 const DB_PATH: &str = "/var/lib/pacman/";
@@ -32,6 +32,29 @@ fn get_reverse_deps<'a>(pkgname: &str, pacman: &'a alpm::Alpm) -> Result<Vec<Str
     Ok(reverse_deps)
 }
 
+fn get_reverse_deps_map<'a>(pacman: &'a alpm::Alpm) -> Result<HashMap<String, Vec<String>>, Error> {
+    let mut reverse_deps: HashMap<String, Vec<String>> = HashMap::new();
+    let dbs = pacman.syncdbs();
+
+    for db in dbs {
+        for pkg in db.pkgs().context("Unable to get packages")? {
+            for dep in pkg.depends() {
+                reverse_deps.entry(dep.name().to_string())
+                    .and_modify(|e| e.push(pkg.name().to_string() ))
+                    .or_insert(vec![pkg.name().to_string()]);
+            }
+
+            for dep in pkg.makedepends() {
+                reverse_deps.entry(dep.name().to_string())
+                    .and_modify(|e| e.push(pkg.name().to_string() ))
+                    .or_insert(vec![pkg.name().to_string()]);
+            }
+        }
+    }
+
+    Ok(reverse_deps)
+}
+
 fn main() -> Result<()> {
     let matches = App::new("genrebuild")
                           .version("0.1")
@@ -51,9 +74,10 @@ fn main() -> Result<()> {
     //let multilib = pacman.register_syncdb("mulitlib", SigLevel::NONE);
     let pkg = find_package_anywhere(pkgname, &pacman)?;
 
-    let mut reverse_deps_map = HashMap::new();
+    let reverse_deps_map = get_reverse_deps_map(&pacman)?;
     let mut to_visit = VecDeque::new();
-    to_visit.push_back(pkgname.to_string());
+    let mut to_build = HashSet::new();
+    to_visit.push_back(pkgname);
 
     while !to_visit.is_empty() {
         let pkg = if let Some(pkg) = to_visit.pop_front() {
@@ -61,15 +85,16 @@ fn main() -> Result<()> {
         } else {
             break;
         };
-        if !reverse_deps_map.contains_key(&pkg) {
-            let reverse_deps = get_reverse_deps(&pkg, &pacman).unwrap_or_default();
-            reverse_deps_map.insert(pkg.to_string(), reverse_deps.clone());
-            to_visit.par_extend(reverse_deps);
-        }
+        let reverse_deps = if let Some(rev_deps_for_pkg) = reverse_deps_map.get(pkg) {
+            if to_build.get(&pkg.to_string()).is_none() {
+                to_visit.extend(rev_deps_for_pkg.iter().map(|x| x.as_str()));
+                to_build.extend(rev_deps_for_pkg);
+            }
+        };
     }
 
-    //let res = get_reverse_deps(pkg.name(), &pacman);
-    dbg!(reverse_deps_map);
+    dbg!(to_build.clone());
+    dbg!(to_build.len());
 
     Ok(())
 }

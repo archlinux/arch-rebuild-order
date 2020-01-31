@@ -1,5 +1,5 @@
 [package]
-name = "genrebuild"
+name = "rebuilder"
 version = "0.1.0"
 authors = ["Jelle van der Waa <jelle@archlinux.org>"]
 edition = "2018"
