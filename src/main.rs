@@ -68,10 +68,10 @@ fn main() -> Result<()> {
     let pkgnames = args.pkgnames;
 
     let pacman = alpm::Alpm::new(ROOT_DIR, DB_PATH).context("could not initialise pacman db")?;
-    let core = pacman.register_syncdb("core", SigLevel::NONE);
-    let extra = pacman.register_syncdb("extra", SigLevel::NONE);
-    let community = pacman.register_syncdb("community", SigLevel::NONE);
-    //let multilib = pacman.register_syncdb("mulitlib", SigLevel::NONE);
+    let _core = pacman.register_syncdb("core", SigLevel::NONE);
+    let _extra = pacman.register_syncdb("extra", SigLevel::NONE);
+    let _community = pacman.register_syncdb("community", SigLevel::NONE);
+    //let _multilib = pacman.register_syncdb("mulitlib", SigLevel::NONE);
     let reverse_deps_map = get_reverse_deps_map(&pacman)?;
 
     for pkg in &pkgnames {
@@ -89,7 +89,7 @@ fn main() -> Result<()> {
             break;
         };
 
-        let reverse_deps = if let Some(rev_deps_for_pkg) = reverse_deps_map.get(pkg) {
+        let _reverse_deps = if let Some(rev_deps_for_pkg) = reverse_deps_map.get(pkg) {
             if to_build.get(&pkg.to_string()).is_none() {
                 to_visit.extend(rev_deps_for_pkg.iter().map(|x| x.as_str()));
             }
