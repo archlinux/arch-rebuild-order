@@ -1,12 +1,12 @@
-//use std::fs::File;
-//use std::io::prelude::*;
+use std::fs::File;
+use std::io::prelude::*;
 use std::collections::{VecDeque, HashMap, HashSet};
 
 use structopt::StructOpt;
 use alpm::{SigLevel, Package};
 use anyhow::{Context, Result, Error};
 use petgraph::graph::DiGraph;
-//use petgraph::dot::{Dot, Config};
+use petgraph::dot::{Dot, Config};
 
 
 const ROOT_DIR: &str = "/";
@@ -52,7 +52,11 @@ fn get_reverse_deps_map(pacman: &alpm::Alpm) -> Result<HashMap<String, Vec<Strin
 struct Args {
     /// List of input packages
     #[structopt(min_values = 1, required = true)]
-    pkgnames: Vec<String>
+    pkgnames: Vec<String>,
+
+    /// Write a dotfile into the given file
+    #[structopt(short, long)]
+    dotfile: Option<String>,
 }
 
 fn main() -> Result<()> {
@@ -102,9 +106,11 @@ fn main() -> Result<()> {
         };
     }
 
-    //let dotgraph = Dot::with_config(&graph, &[Config::EdgeNoLabel]);
-    //let mut file = File::create("foo.dot")?;
-    //file.write_all(dotgraph.to_string().as_bytes())?;
+    if let Some(filename) = args.dotfile {
+        let dotgraph = Dot::with_config(&graph, &[Config::EdgeNoLabel]);
+        let mut file = File::create(filename)?;
+        file.write_all(dotgraph.to_string().as_bytes())?;
+    }
 
     Ok(())
 }
