@@ -85,11 +85,12 @@ fn main() -> Result<()> {
         } else {
             break;
         };
+
         let reverse_deps = if let Some(rev_deps_for_pkg) = reverse_deps_map.get(pkg) {
             if to_build.get(&pkg.to_string()).is_none() {
                 to_visit.extend(rev_deps_for_pkg.iter().map(|x| x.as_str()));
-                to_build.extend(rev_deps_for_pkg);
             }
+            to_build.extend(rev_deps_for_pkg);
         };
     }
 
