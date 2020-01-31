@@ -1,6 +1,6 @@
 use std::collections::{VecDeque, HashMap, HashSet};
 
-use clap::{Arg, App};
+use structopt::StructOpt;
 use alpm::{SigLevel, Package};
 use anyhow::{Context, Result, Error};
 
@@ -55,29 +55,32 @@ fn get_reverse_deps_map<'a>(pacman: &'a alpm::Alpm) -> Result<HashMap<String, Ve
     Ok(reverse_deps)
 }
 
-fn main() -> Result<()> {
-    let matches = App::new("genrebuild")
-                          .version("0.1")
-                          .author("Jelle van der Waa <jelle@vdwaa.nl>")
-                          .about("genrebuild")
-                          .arg(Arg::with_name("pkgname")
-                               .help("package name")
-                               .required(true))
-                          .get_matches();
+#[derive(Debug, StructOpt)]
+#[structopt(name = "rebuilder", about, author)]
+struct Args {
+    /// List of input packages
+    #[structopt(min_values = 1, required = true)]
+    pkgnames: Vec<String>
+}
 
-    let pkgname = matches.value_of("pkgname").unwrap();
+fn main() -> Result<()> {
+    let args = Args::from_args();
+    let pkgnames = args.pkgnames;
 
     let pacman = alpm::Alpm::new(ROOT_DIR, DB_PATH).context("could not initialise pacman db")?;
     let core = pacman.register_syncdb("core", SigLevel::NONE);
     let extra = pacman.register_syncdb("extra", SigLevel::NONE);
     let community = pacman.register_syncdb("community", SigLevel::NONE);
     //let multilib = pacman.register_syncdb("mulitlib", SigLevel::NONE);
-    let pkg = find_package_anywhere(pkgname, &pacman)?;
-
     let reverse_deps_map = get_reverse_deps_map(&pacman)?;
+
+    for pkg in &pkgnames {
+        find_package_anywhere(&pkg, &pacman)?;
+    }
+
     let mut to_visit = VecDeque::new();
     let mut to_build = HashSet::new();
-    to_visit.push_back(pkgname);
+    to_visit.extend(pkgnames.iter().map(|x| x.as_str()));
 
     while !to_visit.is_empty() {
         let pkg = if let Some(pkg) = to_visit.pop_front() {
