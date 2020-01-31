@@ -20,7 +20,7 @@ fn find_package_anywhere<'a>(pkgname: &str, pacman: &'a alpm::Alpm) -> Result<Pa
     Err(alpm::Error::PkgNotFound)
 }
 
-fn get_reverse_deps_map<'a>(pacman: &'a alpm::Alpm) -> Result<HashMap<String, Vec<String>>, Error> {
+fn get_reverse_deps_map(pacman: &alpm::Alpm) -> Result<HashMap<String, Vec<String>>, Error> {
     let mut reverse_deps: HashMap<String, Vec<String>> = HashMap::new();
     let dbs = pacman.syncdbs();
 
@@ -29,13 +29,13 @@ fn get_reverse_deps_map<'a>(pacman: &'a alpm::Alpm) -> Result<HashMap<String, Ve
             for dep in pkg.depends() {
                 reverse_deps.entry(dep.name().to_string())
                     .and_modify(|e| e.push(pkg.name().to_string() ))
-                    .or_insert(vec![pkg.name().to_string()]);
+                    .or_insert_with(|| vec![pkg.name().to_string()]);
             }
 
             for dep in pkg.makedepends() {
                 reverse_deps.entry(dep.name().to_string())
                     .and_modify(|e| e.push(pkg.name().to_string() ))
-                    .or_insert(vec![pkg.name().to_string()]);
+                    .or_insert_with(|| vec![pkg.name().to_string()]);
             }
         }
     }
@@ -77,7 +77,7 @@ fn main() -> Result<()> {
             break;
         };
 
-        let _reverse_deps = if let Some(rev_deps_for_pkg) = reverse_deps_map.get(pkg) {
+        if let Some(rev_deps_for_pkg) = reverse_deps_map.get(pkg) {
             if to_build.get(&pkg.to_string()).is_none() {
                 to_visit.extend(rev_deps_for_pkg.iter().map(|x| x.as_str()));
             }
