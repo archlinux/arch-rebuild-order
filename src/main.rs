@@ -7,6 +7,7 @@ use alpm::{SigLevel, Package};
 use anyhow::{Context, Result, Error};
 use petgraph::graph::DiGraph;
 use petgraph::dot::{Dot, Config};
+use petgraph::visit::Bfs;
 
 
 const ROOT_DIR: &str = "/";
@@ -104,6 +105,18 @@ fn main() -> Result<()> {
             }
             to_build.extend(rev_deps_for_pkg);
         };
+    }
+
+    for pkg in &pkgnames {
+        if let Some(pkgname) = cache_node.get(pkg.as_str()) {
+            let mut bfs = Bfs::new(&graph, *pkgname);
+
+            while let Some(nx) = bfs.next(&graph) {
+                let node = graph[nx];
+                print!("{} ", node);
+            }
+            println!("");
+        }
     }
 
     if let Some(filename) = args.dotfile {
