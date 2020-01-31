@@ -1,8 +1,12 @@
+//use std::fs::File;
+//use std::io::prelude::*;
 use std::collections::{VecDeque, HashMap, HashSet};
 
 use structopt::StructOpt;
 use alpm::{SigLevel, Package};
 use anyhow::{Context, Result, Error};
+use petgraph::graph::DiGraph;
+//use petgraph::dot::{Dot, Config};
 
 
 const ROOT_DIR: &str = "/";
@@ -66,9 +70,13 @@ fn main() -> Result<()> {
         find_package_anywhere(&pkg, &pacman)?;
     }
 
+    let mut graph = DiGraph::<&str, u16>::new();
+
     let mut to_visit = VecDeque::new();
     let mut to_build = HashSet::new();
     to_visit.extend(pkgnames.iter().map(|x| x.as_str()));
+
+    let mut cache_node = HashMap::new(); 
 
     while !to_visit.is_empty() {
         let pkg = if let Some(pkg) = to_visit.pop_front() {
@@ -77,16 +85,26 @@ fn main() -> Result<()> {
             break;
         };
 
+        let root = cache_node.entry(pkg).or_insert_with(|| graph.add_node(pkg)).clone();
+
         if let Some(rev_deps_for_pkg) = reverse_deps_map.get(pkg) {
             if to_build.get(&pkg.to_string()).is_none() {
                 to_visit.extend(rev_deps_for_pkg.iter().map(|x| x.as_str()));
+            }
+
+            for rev_dep in rev_deps_for_pkg {
+                let depnode = cache_node.entry(rev_dep).or_insert_with(|| graph.add_node(rev_dep)).clone();
+                if !graph.contains_edge(root, depnode) {
+                    graph.add_edge(root, depnode, 1);
+                }
             }
             to_build.extend(rev_deps_for_pkg);
         };
     }
 
-    dbg!(to_build.clone());
-    dbg!(to_build.len());
+    //let dotgraph = Dot::with_config(&graph, &[Config::EdgeNoLabel]);
+    //let mut file = File::create("foo.dot")?;
+    //file.write_all(dotgraph.to_string().as_bytes())?;
 
     Ok(())
 }
