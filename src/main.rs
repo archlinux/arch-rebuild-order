@@ -59,7 +59,7 @@ fn main() -> Result<()> {
     let _core = pacman.register_syncdb("core", SigLevel::NONE);
     let _extra = pacman.register_syncdb("extra", SigLevel::NONE);
     let _community = pacman.register_syncdb("community", SigLevel::NONE);
-    //let _multilib = pacman.register_syncdb("mulitlib", SigLevel::NONE);
+    let _multilib = pacman.register_syncdb("multilib", SigLevel::NONE);
     let reverse_deps_map = get_reverse_deps_map(&pacman)?;
 
     for pkg in &pkgnames {
