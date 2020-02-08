@@ -125,7 +125,7 @@ fn main() -> Result<()> {
                 let node = graph[nx];
                 print!("{} ", node);
             }
-            println!("");
+            println!();
         }
     }
 
