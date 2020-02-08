@@ -30,7 +30,7 @@ fn get_reverse_deps_map(pacman: &alpm::Alpm) -> Result<HashMap<String, Vec<Strin
     let dbs = pacman.syncdbs();
 
     for db in dbs {
-        for pkg in db.pkgs().context("Unable to get packages")? {
+        for pkg in db.pkgs().context(format!("Unable to get packages from sync db {}", db.name()))? {
             for dep in pkg.depends() {
                 reverse_deps.entry(dep.name().to_string())
                     .and_modify(|e| e.push(pkg.base().unwrap_or_else(|| pkg.name()).to_string()))
