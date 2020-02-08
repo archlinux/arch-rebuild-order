@@ -55,6 +55,10 @@ struct Args {
     #[structopt(min_values = 1, required = true)]
     pkgnames: Vec<String>,
 
+    /// The path to the pacman database, default ( /var/lib/pacman )
+    #[structopt(long)]
+    dbpath: Option<String>,
+
     /// Write a dotfile into the given file
     #[structopt(short, long)]
     dotfile: Option<String>,
@@ -64,7 +68,13 @@ fn main() -> Result<()> {
     let args = Args::from_args();
     let pkgnames = args.pkgnames;
 
-    let pacman = alpm::Alpm::new(ROOT_DIR, DB_PATH).context("could not initialise pacman db")?;
+    let pacman = match args.dbpath {
+        Some(path) => {
+            alpm::Alpm::new(ROOT_DIR, &path).context("could not initialise pacman db from dbpath")?
+        }
+        None => alpm::Alpm::new(ROOT_DIR, DB_PATH).context("could not initialise pacman db")?
+    };
+
     let _core = pacman.register_syncdb("core", SigLevel::NONE);
     let _extra = pacman.register_syncdb("extra", SigLevel::NONE);
     let _community = pacman.register_syncdb("community", SigLevel::NONE);
