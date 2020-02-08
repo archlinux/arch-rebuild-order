@@ -75,10 +75,10 @@ fn main() -> Result<()> {
         None => alpm::Alpm::new(ROOT_DIR, DB_PATH).context("could not initialise pacman db")?
     };
 
-    let _core = pacman.register_syncdb("core", SigLevel::NONE);
-    let _extra = pacman.register_syncdb("extra", SigLevel::NONE);
-    let _community = pacman.register_syncdb("community", SigLevel::NONE);
-    let _multilib = pacman.register_syncdb("multilib", SigLevel::NONE);
+    let _core = pacman.register_syncdb("core", SigLevel::DATABASE_OPTIONAL);
+    let _extra = pacman.register_syncdb("extra", SigLevel::DATABASE_OPTIONAL);
+    let _community = pacman.register_syncdb("community", SigLevel::DATABASE_OPTIONAL);
+    let _multilib = pacman.register_syncdb("multilib", SigLevel::DATABASE_OPTIONAL);
     let reverse_deps_map = get_reverse_deps_map(&pacman)?;
 
     for pkg in &pkgnames {
