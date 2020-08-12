@@ -3,6 +3,22 @@ image: "archlinux:latest"
 before_script:
   - pacman -Syu --needed --noconfirm rust gcc
 
-test:cargo:
+stages:
+  - format
+  - clippy
+  - check
+
+format:
+  stage: format
   script:
-    - cargo test --all
+    - cargo fmt --all -- --check
+
+clippy:
+  stage: clippy
+  script:
+    - cargo clippy --all -- -D warnings
+
+check:
+  stage: check
+  script:
+    - cargo check --all --verbose --release
