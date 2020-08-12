@@ -3,10 +3,10 @@ use std::fs::File;
 use std::io::prelude::*;
 
 use alpm::{Package, SigLevel};
-use anyhow::{Context, Error, Result};
 use petgraph::dot::{Config, Dot};
 use petgraph::graph::DiGraph;
 use petgraph::visit::Bfs;
+use std::error::Error;
 use structopt::StructOpt;
 
 const ROOT_DIR: &str = "/";
@@ -26,14 +26,15 @@ fn find_package_anywhere<'a>(
     Err(alpm::Error::PkgNotFound)
 }
 
-fn get_reverse_deps_map(pacman: &alpm::Alpm) -> Result<HashMap<String, Vec<String>>, Error> {
+fn get_reverse_deps_map(
+    pacman: &alpm::Alpm,
+) -> Result<HashMap<String, Vec<String>>, Box<dyn Error>> {
     let mut reverse_deps: HashMap<String, Vec<String>> = HashMap::new();
     let dbs = pacman.syncdbs();
 
     for db in dbs {
-        for pkg in db
-            .pkgs()
-            .context(format!("Unable to get packages from sync db {}", db.name()))?
+        for pkg in db.pkgs().unwrap()
+        //"Unable to get packages from sync db {}"
         {
             for dep in pkg.depends() {
                 reverse_deps
@@ -70,14 +71,15 @@ struct Args {
     dotfile: Option<String>,
 }
 
-fn main() -> Result<()> {
+fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::from_args();
     let pkgnames = args.pkgnames;
 
     let pacman = match args.dbpath {
-        Some(path) => alpm::Alpm::new(ROOT_DIR, &path)
-            .context("could not initialise pacman db from dbpath")?,
-        None => alpm::Alpm::new(ROOT_DIR, DB_PATH).context("could not initialise pacman db")?,
+        Some(path) => alpm::Alpm::new(ROOT_DIR, &path).unwrap(),
+        //"could not initialise pacman db from dbpath"
+        None => alpm::Alpm::new(ROOT_DIR, DB_PATH).unwrap(),
+        //.context("could not initialise pacman db"
     };
 
     let _core = pacman.register_syncdb("core", SigLevel::DATABASE_OPTIONAL);

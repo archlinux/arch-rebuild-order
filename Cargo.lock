@@ -2,15 +2,15 @@
 # It is not intended for manual editing.
 [[package]]
 name = "alpm"
-version = "0.9.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "alpm-sys-fork 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "alpm-sys 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bitflags 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
-name = "alpm-sys-fork"
+name = "alpm-sys"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
@@ -21,11 +21,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "winapi 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
-
-[[package]]
-name = "anyhow"
-version = "1.0.32"
-source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "atty"
@@ -160,8 +155,7 @@ dependencies = [
 name = "rebuilder"
 version = "0.1.0"
 dependencies = [
- "alpm 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "anyhow 1.0.32 (registry+https://github.com/rust-lang/crates.io-index)",
+ "alpm 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "petgraph 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "structopt 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -256,10 +250,9 @@ version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [metadata]
-"checksum alpm 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)" = "3bb74d01ed86932b1f061d32715faec77104239140557cc6e4f7ce5da9bcfafd"
-"checksum alpm-sys-fork 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ec7b55dfea0a6b63c8c465d15650ea50be7a85d70d22d95b8798e71114c40310"
+"checksum alpm 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)" = "58873a068005df875021f3afa259dda630bab0baf434027464ac1d98fb8aeda7"
+"checksum alpm-sys 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "11f0e1520dafe1430f8a74d72a7bdbea863ae6f6e78b72b1c7421dd5419ea440"
 "checksum ansi_term 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ee49baf6cb617b853aa8d93bf420db2383fab46d314482ca2803b40d5fde979b"
-"checksum anyhow 1.0.32 (registry+https://github.com/rust-lang/crates.io-index)" = "6b602bfe940d21c130f3895acd65221e8a61270debe89d628b9cb4e3ccb8569b"
 "checksum atty 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)" = "d9b39be18770d11421cdb1b9947a45dd3f37e93092cbf377614828a319d5fee8"
 "checksum autocfg 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "f8aac770f1885fd7e387acedd76065302551364496e46b3dd00860b2f8359b9d"
 "checksum bitflags 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "cf1de2fe8c75bc145a2f577add951f8134889b4795d47466a54a5c846d691693"

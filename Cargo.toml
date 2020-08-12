@@ -14,10 +14,9 @@ categories = ["command-line-utilities"]
 publish = false
 
 [dependencies]
-alpm = "0.9.0"
-anyhow = "1.0"
-structopt = "0.3"
+alpm = "0.10"
 petgraph = "0.5"
+structopt = "0.3"
 
 [profile.release]
 lto = true
