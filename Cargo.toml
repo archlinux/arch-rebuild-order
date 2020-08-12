@@ -3,15 +3,21 @@ name = "rebuilder"
 version = "0.1.0"
 authors = ["Jelle van der Waa <jelle@archlinux.org>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "A CLI tool to determine the rebuild order of provided package(s)."
+documentation = "https://gitlab.archlinux.org/archlinux/rebuilder"
+readme = "README.md"
+homepage = "https://gitlab.archlinux.org/archlinux/rebuilder"
+repository = "https://gitlab.archlinux.org/archlinux/rebuilder"
+license-file = "LICENSE.md"
+keywords = ["archlinux", "build", "alpm"]
+categories = ["command-line-utilities"]
+publish = false
 
 [dependencies]
 alpm = "0.9.0"
-anyhow = "1"
+anyhow = "1.0"
 structopt = "0.3"
-petgraph = "0.5.0"
+petgraph = "0.5"
 
 [profile.release]
-opt-level = 3
 lto = true
