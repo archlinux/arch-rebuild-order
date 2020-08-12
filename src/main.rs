@@ -105,10 +105,7 @@ fn main() -> Result<()> {
             break;
         };
 
-        let root = cache_node
-            .entry(pkg)
-            .or_insert_with(|| graph.add_node(pkg))
-            .clone();
+        let root = *cache_node.entry(pkg).or_insert_with(|| graph.add_node(pkg));
 
         if let Some(rev_deps_for_pkg) = reverse_deps_map.get(pkg) {
             if to_build.get(&pkg.to_string()).is_none() {
@@ -116,10 +113,9 @@ fn main() -> Result<()> {
             }
 
             for rev_dep in rev_deps_for_pkg {
-                let depnode = cache_node
+                let depnode = *cache_node
                     .entry(rev_dep)
-                    .or_insert_with(|| graph.add_node(rev_dep))
-                    .clone();
+                    .or_insert_with(|| graph.add_node(rev_dep));
                 if !graph.contains_edge(root, depnode) {
                     graph.add_edge(root, depnode, 1);
                 }
