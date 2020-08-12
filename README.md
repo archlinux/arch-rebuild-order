@@ -1,26 +1,19 @@
 # Arch Linux Rebuilder
 
-Tool to determine the rebuild order of provided package(s).
+A CLI tool to determine the rebuild order of provided package(s).
 
 ## Requirements
 
-- generate a list of packages to rebuild in order for given package(s)
-- generate the build order within one second
+- Generate a list of packages to rebuild in order for given package(s).
+- Generate the build order within one second.
 
 ## Algorithm
 
-The rebuilder program uses the local syncdb's to build a hashmap consisting a
-mapping of packages to it's reverse (make) dependencies. Now the programs adds
-the provided pkgnames to the **to_visit** list and starts to walk over the
-**to_visit** list pops a package to inspect from the list and adds the found
-reverse dependencies to the **to_visit** list and continues this until
-**to_visit** is empty.
+Rebuilder uses the local syncdb to build a hashmap, mapping packages to their reverse (make) dependencies. It adds the provided pkgnames to the **to_visit** list and iterates over each entry, pops it to inspect and in turn adds all found reverse dependencies again to the **to_visit** list. It repeats this cycle until the entire **to_visit** list is empty.
 
-During the iteration the pkg node is create to a DiGraph and for the reverse
-dependencies of this package a node is created and added as an edge of the
-pkg node.
+During this iteration process a pkg node is created in a DiGraph and for all reverse dependencies of this package additional node are created and added as an edge of the parent pkg node.
 
 ## Limitations
 
-* the testing/community-testing repositories are not included
-* the script expects an updated syncdb and does not warn if they are old
+* `testing` and `community-testing` repositories are not included.
+* Rebuilder expects an up-to-date syncdb and does not provide warming if it is not.
