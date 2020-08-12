@@ -5,7 +5,7 @@ use petgraph::visit::Bfs;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::error::Error;
 use std::fs::File;
-use std::io::prelude::*;
+use std::io::{BufWriter, Write};
 
 const ROOT_DIR: &str = "/";
 const DB_PATH: &str = "/var/lib/pacman/";
@@ -123,8 +123,9 @@ pub fn run(
 
     if let Some(filename) = dotfile {
         let dotgraph = Dot::with_config(&graph, &[Config::EdgeNoLabel]);
-        let mut file = File::create(filename)?;
-        file.write_all(dotgraph.to_string().as_bytes())?;
+        let file = File::create(filename)?;
+        let mut bufw = BufWriter::new(file);
+        bufw.write_all(dotgraph.to_string().as_bytes())?;
     }
 
     Ok(())
