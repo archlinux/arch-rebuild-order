@@ -10,7 +10,7 @@ use std::io::{BufWriter, Write};
 const ROOT_DIR: &str = "/";
 const DB_PATH: &str = "/var/lib/pacman/";
 
-/// Attempt to find a first match of a package in the syncdb.
+/// Attempt to find any match of a package in the syncdb.
 fn find_package_anywhere<'a>(
     pkgname: &str,
     pacman: &'a alpm::Alpm,
@@ -25,6 +25,7 @@ fn find_package_anywhere<'a>(
     Err(alpm::Error::PkgNotFound)
 }
 
+/// Retrieve a HashMap of all reverse dependencies.
 fn get_reverse_deps_map(
     pacman: &alpm::Alpm,
 ) -> Result<HashMap<String, Vec<String>>, Box<dyn Error>> {
@@ -32,8 +33,10 @@ fn get_reverse_deps_map(
     let dbs = pacman.syncdbs();
 
     for db in dbs {
-        for pkg in db.pkgs().unwrap() {
-            //.context(format!("Unable to get packages from sync db {}", db.name()))?
+        if let Err(_) = db.pkgs() {
+            eprintln!("Unable to get packages from sync db {}", db.name());
+        }
+        for pkg in db.pkgs()? {
             for dep in pkg.depends() {
                 reverse_deps
                     .entry(dep.name().to_string())
@@ -53,17 +56,21 @@ fn get_reverse_deps_map(
     Ok(reverse_deps)
 }
 
+/// Run rbuilder, returning the rebuild order of provided package(s).
 pub fn run(
     pkgnames: Vec<String>,
     dbpath: Option<String>,
     dotfile: Option<String>,
 ) -> Result<(), Box<dyn Error>> {
     let pacman = match dbpath {
-        Some(path) => alpm::Alpm::new(ROOT_DIR, &path).unwrap(),
-        //.context("could not initialise pacman db from dbpath")?,
-        None => alpm::Alpm::new(ROOT_DIR, DB_PATH).unwrap(),
-        //.context("could not initialise pacman db")?,
+        Some(path) => alpm::Alpm::new(ROOT_DIR, &path),
+        None => alpm::Alpm::new(ROOT_DIR, DB_PATH),
     };
+
+    if let Err(_) = pacman {
+        eprintln!("Could not initialize pacman db");
+    }
+    let pacman = pacman?;
 
     let _core = pacman.register_syncdb("core", SigLevel::DATABASE_OPTIONAL);
     let _extra = pacman.register_syncdb("extra", SigLevel::DATABASE_OPTIONAL);

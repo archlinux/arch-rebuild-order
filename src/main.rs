@@ -20,6 +20,10 @@ fn main() {
     let args = Args::from_args();
     match rebuilder::run(args.pkgnames, args.dbpath, args.dotfile) {
         Ok(_) => std::process::exit(0),
-        Err(_e) => std::process::exit(1),
+        Err(e) => {
+            eprintln!("Critical failure - rebuilder has stopped working");
+            eprintln!("Reason: {}", e);
+            std::process::exit(1);
+        }
     }
 }
