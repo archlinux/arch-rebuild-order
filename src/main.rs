@@ -19,7 +19,10 @@ struct Args {
 fn main() {
     let args = Args::from_args();
     match rebuilder::run(args.pkgnames, args.dbpath, args.dotfile) {
-        Ok(_) => std::process::exit(0),
+        Ok(output) => {
+            println!("{}", output);
+            std::process::exit(0);
+        }
         Err(e) => {
             eprintln!("Critical failure - rebuilder has stopped working");
             eprintln!("Reason: {}", e);

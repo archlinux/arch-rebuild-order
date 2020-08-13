@@ -33,7 +33,7 @@ fn get_reverse_deps_map(
     let dbs = pacman.syncdbs();
 
     for db in dbs {
-        if let Err(_) = db.pkgs() {
+        if db.pkgs().is_err() {
             eprintln!("Unable to get packages from sync db {}", db.name());
         }
         for pkg in db.pkgs()? {
@@ -56,18 +56,28 @@ fn get_reverse_deps_map(
     Ok(reverse_deps)
 }
 
+/// Write a given DiGraph to a given file using a buffered writer.
+fn write_dotfile(filename: String, graph: DiGraph<&str, u16>) -> Result<(), Box<dyn Error>> {
+    let dotgraph = Dot::with_config(&graph, &[Config::EdgeNoLabel]);
+    let file = File::create(filename)?;
+    let mut bufw = BufWriter::new(file);
+    bufw.write_all(dotgraph.to_string().as_bytes())?;
+
+    Ok(())
+}
+
 /// Run rbuilder, returning the rebuild order of provided package(s).
 pub fn run(
     pkgnames: Vec<String>,
     dbpath: Option<String>,
     dotfile: Option<String>,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<String, Box<dyn Error>> {
     let pacman = match dbpath {
         Some(path) => alpm::Alpm::new(ROOT_DIR, &path),
         None => alpm::Alpm::new(ROOT_DIR, DB_PATH),
     };
 
-    if let Err(_) = pacman {
+    if pacman.is_err() {
         eprintln!("Could not initialize pacman db");
     }
     let pacman = pacman?;
@@ -116,24 +126,25 @@ pub fn run(
         };
     }
 
+    let mut output = String::new();
     for pkg in &pkgnames {
         if let Some(pkgname) = cache_node.get(pkg.as_str()) {
             let mut bfs = Bfs::new(&graph, *pkgname);
 
             while let Some(nx) = bfs.next(&graph) {
                 let node = graph[nx];
-                print!("{} ", node);
+                output.push_str(node);
+                output.push(' ');
             }
-            println!();
         }
     }
 
     if let Some(filename) = dotfile {
-        let dotgraph = Dot::with_config(&graph, &[Config::EdgeNoLabel]);
-        let file = File::create(filename)?;
-        let mut bufw = BufWriter::new(file);
-        bufw.write_all(dotgraph.to_string().as_bytes())?;
+        if let Err(e) = write_dotfile(filename, graph) {
+            eprintln!("Could not write to file");
+            return Err(e);
+        }
     }
 
-    Ok(())
+    Ok(output)
 }
