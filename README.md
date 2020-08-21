@@ -2,6 +2,14 @@
 
 A CLI tool to determine the rebuild order of provided package(s).
 
+## Usage
+
+To show the rebilder order of opencolorio
+
+```
+cargo run opencolorio
+```
+
 ## Requirements
 
 - Generate a list of packages to rebuild in order for given package(s).
