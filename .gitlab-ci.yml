@@ -1,4 +1,7 @@
-image: "rust:latest"
+image: "archlinux:latest"
+
+before_script:
+  - pacman -Syu --needed --noconfirm rust gcc
 
 test:cargo:
   script:
