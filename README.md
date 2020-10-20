@@ -24,4 +24,4 @@ During this iteration process a pkg node is created in a DiGraph and for all rev
 ## Limitations
 
 * `testing` and `community-testing` repositories are not included.
-* Rebuilder expects an up-to-date syncdb and does not provide warming if it is not.
+* Rebuilder expects an up-to-date syncdb and does not provide warning if it is not.
