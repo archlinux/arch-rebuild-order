@@ -7,6 +7,7 @@ stages:
   - format
   - clippy
   - check
+  - test
 
 format:
   stage: format
@@ -22,3 +23,8 @@ check:
   stage: check
   script:
     - cargo check --all --verbose --release
+
+test:
+  stage: test
+  script:
+    - cargo test --all --verbose --release
