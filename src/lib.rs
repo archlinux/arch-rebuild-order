@@ -40,15 +40,15 @@ fn get_reverse_deps_map(
             for dep in pkg.depends() {
                 reverse_deps
                     .entry(dep.name().to_string())
-                    .and_modify(|e| e.push(pkg.base().unwrap_or_else(|| pkg.name()).to_string()))
-                    .or_insert_with(|| vec![pkg.base().unwrap_or_else(|| pkg.name()).to_string()]);
+                    .and_modify(|e| e.push(pkg.name().to_string()))
+                    .or_insert_with(|| vec![pkg.name().to_string()]);
             }
 
             for dep in pkg.makedepends() {
                 reverse_deps
                     .entry(dep.name().to_string())
-                    .and_modify(|e| e.push(pkg.base().unwrap_or_else(|| pkg.name()).to_string()))
-                    .or_insert_with(|| vec![pkg.base().unwrap_or_else(|| pkg.name()).to_string()]);
+                    .and_modify(|e| e.push(pkg.name().to_string()))
+                    .or_insert_with(|| vec![pkg.name().to_string()]);
             }
         }
     }
