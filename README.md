@@ -17,9 +17,13 @@ cargo run opencolorio
 
 ## Algorithm
 
-Rebuilder uses the local syncdb to build a hashmap, mapping packages to their reverse (make) dependencies. It adds the provided pkgnames to the **to_visit** list and iterates over each entry, pops it to inspect and in turn adds all found reverse dependencies again to the **to_visit** list. It repeats this cycle until the entire **to_visit** list is empty.
+Rebuilder uses the local syncdb to build a hashmap, mapping packages to their reverse (make)
+dependencies. It adds the provided pkgnames to the **to_visit** list and iterates over each entry,
+pops it to inspect and in turn adds all found reverse dependencies again to the **to_visit** list.
+It repeats this cycle until the entire **to_visit** list is empty.
 
-During this iteration process a pkg node is created in a DiGraph and for all reverse dependencies of this package additional node are created and added as an edge of the parent pkg node.
+During this iteration process a pkg node is created in a DiGraph and for all reverse dependencies
+of this package additional node are created and added as an edge of the parent pkg node.
 
 ## Limitations
 
