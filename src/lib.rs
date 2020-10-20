@@ -1,7 +1,7 @@
 use alpm::{Package, SigLevel};
 use petgraph::dot::{Config, Dot};
 use petgraph::graph::DiGraph;
-use petgraph::visit::Bfs;
+use petgraph::visit::DfsPostOrder;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::error::Error;
 use std::fs::File;
@@ -126,17 +126,26 @@ pub fn run(
         };
     }
 
-    let mut output = String::new();
+    let mut rebuild_order_packages = Vec::new();
     for pkg in &pkgnames {
         if let Some(pkgname) = cache_node.get(pkg.as_str()) {
-            let mut bfs = Bfs::new(&graph, *pkgname);
+            let mut bfs = DfsPostOrder::new(&graph, *pkgname);
 
             while let Some(nx) = bfs.next(&graph) {
                 let node = graph[nx];
-                output.push_str(node);
-                output.push(' ');
+                rebuild_order_packages.push(node);
             }
         }
+    }
+
+    // Reverse the rebuilder order as DfsPostOrder starts with the first pkgname and therefore
+    // shows it as last package
+    rebuild_order_packages.reverse();
+
+    let mut output = String::new();
+    for elem in rebuild_order_packages.iter() {
+        output.push_str(elem);
+        output.push(' ');
     }
 
     if let Some(filename) = dotfile {
