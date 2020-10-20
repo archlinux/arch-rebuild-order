@@ -66,7 +66,7 @@ fn write_dotfile(filename: String, graph: DiGraph<&str, u16>) -> Result<(), Box<
     Ok(())
 }
 
-/// Run rbuilder, returning the rebuild order of provided package(s).
+/// Run rebuilder, returning the rebuild order of provided package(s).
 pub fn run(
     pkgnames: Vec<String>,
     dbpath: Option<String>,
