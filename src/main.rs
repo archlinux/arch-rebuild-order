@@ -1,6 +1,5 @@
 use structopt::StructOpt;
 
-
 #[derive(Debug, StructOpt)]
 #[structopt(name = "rebuilder", about, author)]
 struct Args {
@@ -9,7 +8,11 @@ struct Args {
     pkgnames: Vec<String>,
 
     /// Repositories
-    #[structopt(default_value = "core,extra,community,multilib", long, use_delimiter = true)]
+    #[structopt(
+        default_value = "core,extra,community,multilib",
+        long,
+        use_delimiter = true
+    )]
     repos: Vec<String>,
 
     /// The path to the pacman database, default ( /var/lib/pacman )
