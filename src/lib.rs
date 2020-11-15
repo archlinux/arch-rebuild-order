@@ -70,6 +70,7 @@ fn write_dotfile(filename: String, graph: DiGraph<&str, u16>) -> Result<(), Box<
 pub fn run(
     pkgnames: Vec<String>,
     dbpath: Option<String>,
+    repos: Vec<String>,
     dotfile: Option<String>,
 ) -> Result<String, Box<dyn Error>> {
     let pacman = match dbpath {
@@ -82,10 +83,10 @@ pub fn run(
     }
     let pacman = pacman?;
 
-    let _core = pacman.register_syncdb("core", SigLevel::DATABASE_OPTIONAL);
-    let _extra = pacman.register_syncdb("extra", SigLevel::DATABASE_OPTIONAL);
-    let _community = pacman.register_syncdb("community", SigLevel::DATABASE_OPTIONAL);
-    let _multilib = pacman.register_syncdb("multilib", SigLevel::DATABASE_OPTIONAL);
+    for repo in repos {
+        let _repo = pacman.register_syncdb(&repo, SigLevel::DATABASE_OPTIONAL);
+    }
+
     let reverse_deps_map = get_reverse_deps_map(&pacman)?;
 
     for pkg in &pkgnames {

@@ -1,11 +1,16 @@
 use structopt::StructOpt;
 
+
 #[derive(Debug, StructOpt)]
 #[structopt(name = "rebuilder", about, author)]
 struct Args {
     /// List of input packages
     #[structopt(min_values = 1, required = true)]
     pkgnames: Vec<String>,
+
+    /// Repositories
+    #[structopt(default_value = "core,extra,community,multilib", long, use_delimiter = true)]
+    repos: Vec<String>,
 
     /// The path to the pacman database, default ( /var/lib/pacman )
     #[structopt(long)]
@@ -18,7 +23,7 @@ struct Args {
 
 fn main() {
     let args = Args::from_args();
-    match rebuilder::run(args.pkgnames, args.dbpath, args.dotfile) {
+    match rebuilder::run(args.pkgnames, args.dbpath, args.repos, args.dotfile) {
         Ok(output) => {
             println!("{}", output);
             std::process::exit(0);
