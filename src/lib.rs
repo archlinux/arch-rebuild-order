@@ -28,8 +28,8 @@ fn find_package_anywhere<'a>(
 /// Retrieve a HashMap of all reverse dependencies.
 fn get_reverse_deps_map(
     pacman: &alpm::Alpm,
-) -> Result<HashMap<String, Vec<String>>, Box<dyn Error>> {
-    let mut reverse_deps: HashMap<String, Vec<String>> = HashMap::new();
+) -> Result<HashMap<String, HashSet<String>>, Box<dyn Error>> {
+    let mut reverse_deps: HashMap<String, HashSet<String>> = HashMap::new();
     let dbs = pacman.syncdbs();
 
     for db in dbs {
@@ -40,15 +40,27 @@ fn get_reverse_deps_map(
             for dep in pkg.depends() {
                 reverse_deps
                     .entry(dep.name().to_string())
-                    .and_modify(|e| e.push(pkg.name().to_string()))
-                    .or_insert_with(|| vec![pkg.name().to_string()]);
+                    .and_modify(|e| {
+                        e.insert(pkg.name().to_string());
+                    })
+                    .or_insert_with(|| {
+                        let mut modify = HashSet::new();
+                        modify.insert(pkg.name().to_string());
+                        modify
+                    });
             }
 
             for dep in pkg.makedepends() {
                 reverse_deps
                     .entry(dep.name().to_string())
-                    .and_modify(|e| e.push(pkg.name().to_string()))
-                    .or_insert_with(|| vec![pkg.name().to_string()]);
+                    .and_modify(|e| {
+                        e.insert(pkg.name().to_string());
+                    })
+                    .or_insert_with(|| {
+                        let mut modify = HashSet::new();
+                        modify.insert(pkg.name().to_string());
+                        modify
+                    });
             }
         }
     }
