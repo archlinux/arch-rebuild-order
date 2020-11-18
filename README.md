@@ -25,6 +25,15 @@ It repeats this cycle until the entire **to_visit** list is empty.
 During this iteration process a pkg node is created in a DiGraph and for all reverse dependencies
 of this package additional node are created and added as an edge of the parent pkg node.
 
+## DOT output
+
+Rebuilder can generate a DOT file of the rebulder order for a given package.
+
+```
+cargo run -- -d opencolorio.dot opencolorio
+dot -Tpng opencolorio.dot > opencolorio.png
+```
+
 ## Limitations
 
 * `testing` and `community-testing` repositories are not included.
