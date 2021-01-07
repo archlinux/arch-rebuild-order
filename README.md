@@ -4,7 +4,7 @@ A CLI tool to determine the rebuild order of provided package(s).
 
 ## Usage
 
-To show the rebilder order of opencolorio
+To show the rebuild order of opencolorio
 
 ```
 cargo run opencolorio
@@ -27,7 +27,7 @@ of this package additional node are created and added as an edge of the parent p
 
 ## DOT output
 
-Rebuilder can generate a DOT file of the rebulder order for a given package.
+Rebuilder can generate a DOT file of the rebuild order for a given package.
 
 ```
 cargo run -- -d opencolorio.dot opencolorio
