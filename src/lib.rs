@@ -78,7 +78,7 @@ fn write_dotfile(filename: String, graph: DiGraph<&str, u16>) -> Result<(), Box<
     Ok(())
 }
 
-/// Run rebuilder, returning the rebuild order of provided package(s).
+/// Run arch-rebuild-order, returning the rebuild order of provided package(s).
 pub fn run(
     pkgnames: Vec<String>,
     dbpath: Option<String>,
@@ -151,7 +151,7 @@ pub fn run(
         }
     }
 
-    // Reverse the rebuilder order as DfsPostOrder starts with the first pkgname and therefore
+    // Reverse the rebuild order as DfsPostOrder starts with the first pkgname and therefore
     // shows it as last package
     rebuild_order_packages.reverse();
 

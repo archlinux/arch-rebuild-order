@@ -13,7 +13,7 @@ use fixtures::{
 fn test_invalid_dbpath(invalid_dbpath: (Vec<String>, Option<String>)) {
     let pkgnames = invalid_dbpath.0;
     let dbpath = invalid_dbpath.1;
-    rebuilder::run(pkgnames, dbpath, vec![], None).unwrap();
+    arch_rebuild_order::run(pkgnames, dbpath, vec![], None).unwrap();
 }
 
 /// A package without any reverse dependencies should only print the given package
@@ -21,7 +21,7 @@ fn test_invalid_dbpath(invalid_dbpath: (Vec<String>, Option<String>)) {
 fn test_no_reverse_deps(no_reverse_deps: (Vec<Package>, Option<String>, Vec<String>, TempDir)) {
     let packages = no_reverse_deps.0;
 
-    let res = rebuilder::run(
+    let res = arch_rebuild_order::run(
         vec![packages[0].name.clone()],
         no_reverse_deps.1,
         no_reverse_deps.2,
@@ -38,7 +38,7 @@ fn test_reverse_deps(reverse_deps: (Vec<String>, Option<String>, Vec<String>, Te
     let pkgnames = reverse_deps.0;
     let pkgname = &pkgnames[0];
 
-    let res = rebuilder::run(
+    let res = arch_rebuild_order::run(
         vec![pkgname.to_string()],
         reverse_deps.1,
         reverse_deps.2,
@@ -56,7 +56,7 @@ fn test_reverse_make_deps(reverse_make_deps: (Vec<Package>, Option<String>, Vec<
     let packages = reverse_make_deps.0;
     let pkgname = &packages[0].name;
 
-    let res = rebuilder::run(
+    let res = arch_rebuild_order::run(
         vec![pkgname.to_string()],
         reverse_make_deps.1,
         reverse_make_deps.2,
@@ -74,7 +74,7 @@ fn test_multiple_deps(multiple_deps: (Vec<Package>, Option<String>, Vec<String>,
     let packages = multiple_deps.0;
     let pkgname = &packages[0];
 
-    let res = rebuilder::run(
+    let res = arch_rebuild_order::run(
         vec![pkgname.to_string()],
         multiple_deps.1,
         multiple_deps.2,
@@ -92,7 +92,7 @@ fn test_dependency_depth(dependency_depth: (Vec<Package>, Option<String>, Vec<St
     let packages = dependency_depth.0;
     let pkgname = &packages[0];
 
-    let res = rebuilder::run(
+    let res = arch_rebuild_order::run(
         vec![pkgname.to_string()],
         dependency_depth.1,
         dependency_depth.2,
@@ -112,7 +112,7 @@ fn test_dependency_cycle(dependency_cycle: (Vec<Package>, Option<String>, Vec<St
     let packages = dependency_cycle.0;
     let pkgname = &packages[0];
 
-    let res = rebuilder::run(
+    let res = arch_rebuild_order::run(
         vec![pkgname.to_string()],
         dependency_cycle.1,
         dependency_cycle.2,

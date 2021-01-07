@@ -1,4 +1,4 @@
-# Arch Linux Rebuilder
+# Arch Linux Rebuild Order Tool
 
 A CLI tool to determine the rebuild order of provided package(s).
 

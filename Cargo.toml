@@ -1,13 +1,13 @@
 [package]
-name = "rebuilder"
+name = "arch-rebuild-order"
 version = "0.1.0"
 authors = ["Jelle van der Waa <jelle@archlinux.org>"]
 edition = "2018"
 description = "A CLI tool to determine the rebuild order of provided package(s)."
-documentation = "https://gitlab.archlinux.org/archlinux/rebuilder"
+documentation = "https://gitlab.archlinux.org/archlinux/arch-rebuild-order"
 readme = "README.md"
-homepage = "https://gitlab.archlinux.org/archlinux/rebuilder"
-repository = "https://gitlab.archlinux.org/archlinux/rebuilder"
+homepage = "https://gitlab.archlinux.org/archlinux/arch-rebuild-order"
+repository = "https://gitlab.archlinux.org/archlinux/arch-rebuild-order"
 license-file = "LICENSE"
 keywords = ["archlinux", "build", "alpm"]
 categories = ["command-line-utilities"]

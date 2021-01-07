@@ -1,7 +1,7 @@
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "rebuilder", about, author)]
+#[structopt(name = "arch-rebuild-order", about, author)]
 struct Args {
     /// List of input packages
     #[structopt(min_values = 1, required = true)]
@@ -26,13 +26,13 @@ struct Args {
 
 fn main() {
     let args = Args::from_args();
-    match rebuilder::run(args.pkgnames, args.dbpath, args.repos, args.dotfile) {
+    match arch_rebuild_order::run(args.pkgnames, args.dbpath, args.repos, args.dotfile) {
         Ok(output) => {
             println!("{}", output);
             std::process::exit(0);
         }
         Err(e) => {
-            eprintln!("Critical failure - rebuilder has stopped working");
+            eprintln!("Critical failure - arch-rebuild-order has stopped working");
             eprintln!("Reason: {}", e);
             std::process::exit(1);
         }
