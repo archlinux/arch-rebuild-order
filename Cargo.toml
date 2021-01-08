@@ -12,6 +12,7 @@ license-file = "LICENSE"
 keywords = ["archlinux", "build", "alpm"]
 categories = ["command-line-utilities"]
 publish = false
+default-run = "arch-rebuild-order"
 
 [dependencies]
 alpm = "1"

@@ -7,6 +7,8 @@ use std::error::Error;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 
+pub mod args;
+
 const ROOT_DIR: &str = "/";
 const DB_PATH: &str = "/var/lib/pacman/";
 

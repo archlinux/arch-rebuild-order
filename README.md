@@ -38,3 +38,8 @@ dot -Tpng opencolorio.dot > opencolorio.png
 
 * `testing` and `community-testing` repositories are not included.
 * Rebuilder expects an up-to-date syncdb and does not provide warning if it is not.
+
+## Completions
+
+Shell completions can be created with `cargo run --bin completions` in a
+directory specified by the env variable `OUT_DIR`.

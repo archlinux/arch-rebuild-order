@@ -1,28 +1,6 @@
 use structopt::StructOpt;
 
-#[derive(Debug, StructOpt)]
-#[structopt(name = "arch-rebuild-order", about, author)]
-struct Args {
-    /// List of input packages
-    #[structopt(min_values = 1, required = true)]
-    pkgnames: Vec<String>,
-
-    /// Repositories
-    #[structopt(
-        default_value = "core,extra,community,multilib",
-        long,
-        use_delimiter = true
-    )]
-    repos: Vec<String>,
-
-    /// The path to the pacman database, default ( /var/lib/pacman )
-    #[structopt(long)]
-    dbpath: Option<String>,
-
-    /// Write a dotfile into the given file
-    #[structopt(short, long)]
-    dotfile: Option<String>,
-}
+use arch_rebuild_order::args::Args;
 
 fn main() {
     let args = Args::from_args();

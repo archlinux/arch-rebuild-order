@@ -1,6 +1,7 @@
 PREFIX ?= /usr/local
 BINDIR ?= $(PREFIX)/bin
 MANDIR ?= $(PREFIX)/share/man
+OUT_DIR ?= target
 
 # Tools
 
@@ -20,8 +21,13 @@ doc: $(DOCDIR)/$(MANPAGE)
 build:
 	$(CARGO) build --release --locked
 
+completions:
+	OUT_DIR=$(OUT_DIR) $(CARGO) run --bin completions
 
 .PHONY: install
-install: doc
+install: build completions doc
 	install -Dm755 target/release/$(BIN) $(DESTDIR)$(BINDIR)/$(BIN)
 	install -Dm644 $(DOCDIR)/$(MANPAGE) $(DESTDIR)$(MANDIR)/man1/$(MANPAGE)
+	install -Dm644 target/_$(BIN) $(DESTDIR)$(PREFIX)/share/zsh/site-functions/_$(BIN)
+	install -Dm644 target/$(BIN).bash $(DESTDIR)$(PREFIX)/share/bash-completion/$(BIN)
+	install -Dm644 target/$(BIN).fish $(DESTDIR)$(PREFIX)/share/fish/vendor_completions.d/$(BIN)
