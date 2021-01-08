@@ -33,10 +33,7 @@ fn get_reverse_deps_map(
     let dbs = pacman.syncdbs();
 
     for db in dbs {
-        if db.pkgs().is_err() {
-            eprintln!("Unable to get packages from sync db {}", db.name());
-        }
-        for pkg in db.pkgs()? {
+        for pkg in db.pkgs() {
             for dep in pkg.depends() {
                 reverse_deps
                     .entry(dep.name().to_string())
@@ -96,7 +93,7 @@ pub fn run(
     let pacman = pacman?;
 
     for repo in repos {
-        let _repo = pacman.register_syncdb(&repo, SigLevel::DATABASE_OPTIONAL);
+        let _repo = pacman.register_syncdb(repo, SigLevel::DATABASE_OPTIONAL);
     }
 
     let reverse_deps_map = get_reverse_deps_map(&pacman)?;

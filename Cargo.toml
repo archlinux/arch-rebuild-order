@@ -14,7 +14,7 @@ categories = ["command-line-utilities"]
 publish = false
 
 [dependencies]
-alpm = "0.10"
+alpm = "1"
 petgraph = "0.5"
 structopt = "0.3"
 
