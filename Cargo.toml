@@ -18,6 +18,8 @@ default-run = "arch-rebuild-order"
 alpm = "1"
 petgraph = "0.5"
 structopt = "0.3"
+thiserror = "1.0.23"
+anyhow = "1.0.38"
 
 [dev-dependencies]
 rstest = "0.6"

@@ -1,13 +1,14 @@
 use alpm::{Package, SigLevel};
+use error::RebuildOrderError;
 use petgraph::dot::{Config, Dot};
 use petgraph::graph::DiGraph;
 use petgraph::visit::DfsPostOrder;
 use std::collections::{HashMap, HashSet, VecDeque};
-use std::error::Error;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 
 pub mod args;
+pub mod error;
 
 const ROOT_DIR: &str = "/";
 const DB_PATH: &str = "/var/lib/pacman/";
@@ -16,21 +17,18 @@ const DB_PATH: &str = "/var/lib/pacman/";
 fn find_package_anywhere<'a>(
     pkgname: &str,
     pacman: &'a alpm::Alpm,
-) -> Result<Package<'a>, alpm::Error> {
+) -> Result<Package<'a>, RebuildOrderError> {
     let dbs = pacman.syncdbs();
     for db in dbs {
-        let maybe_pkg = db.pkg(pkgname);
-        if maybe_pkg.is_ok() {
-            return maybe_pkg;
+        if let Ok(pkg) = db.pkg(pkgname) {
+            return Ok(pkg);
         }
     }
-    Err(alpm::Error::PkgNotFound)
+    Err(RebuildOrderError::PackageNotFound)
 }
 
 /// Retrieve a HashMap of all reverse dependencies.
-fn get_reverse_deps_map(
-    pacman: &alpm::Alpm,
-) -> Result<HashMap<String, HashSet<String>>, Box<dyn Error>> {
+fn get_reverse_deps_map(pacman: &alpm::Alpm) -> HashMap<String, HashSet<String>> {
     let mut reverse_deps: HashMap<String, HashSet<String>> = HashMap::new();
     let dbs = pacman.syncdbs();
 
@@ -64,11 +62,11 @@ fn get_reverse_deps_map(
         }
     }
 
-    Ok(reverse_deps)
+    reverse_deps
 }
 
 /// Write a given DiGraph to a given file using a buffered writer.
-fn write_dotfile(filename: String, graph: DiGraph<&str, u16>) -> Result<(), Box<dyn Error>> {
+fn write_dotfile(filename: String, graph: DiGraph<&str, u16>) -> Result<(), RebuildOrderError> {
     let dotgraph = Dot::with_config(&graph, &[Config::EdgeNoLabel]);
     let file = File::create(filename)?;
     let mut bufw = BufWriter::new(file);
@@ -83,22 +81,18 @@ pub fn run(
     dbpath: Option<String>,
     repos: Vec<String>,
     dotfile: Option<String>,
-) -> Result<String, Box<dyn Error>> {
+) -> anyhow::Result<String> {
     let pacman = match dbpath {
         Some(path) => alpm::Alpm::new(ROOT_DIR, &path),
         None => alpm::Alpm::new(ROOT_DIR, DB_PATH),
-    };
-
-    if pacman.is_err() {
-        eprintln!("Could not initialize pacman db");
     }
-    let pacman = pacman?;
+    .map_err(RebuildOrderError::PacmanDbInit)?;
 
     for repo in repos {
         let _repo = pacman.register_syncdb(repo, SigLevel::DATABASE_OPTIONAL);
     }
 
-    let reverse_deps_map = get_reverse_deps_map(&pacman)?;
+    let reverse_deps_map = get_reverse_deps_map(&pacman);
 
     for pkg in &pkgnames {
         find_package_anywhere(&pkg, &pacman)?;
@@ -161,10 +155,7 @@ pub fn run(
     }
 
     if let Some(filename) = dotfile {
-        if let Err(e) = write_dotfile(filename, graph) {
-            eprintln!("Could not write to file");
-            return Err(e);
-        }
+        write_dotfile(filename, graph)?;
     }
 
     Ok(output)
