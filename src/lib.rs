@@ -1,4 +1,5 @@
 use alpm::{Package, SigLevel};
+use anyhow::{anyhow, Result};
 use error::RebuildOrderError;
 use petgraph::dot::{Config, Dot};
 use petgraph::graph::DiGraph;
@@ -14,17 +15,14 @@ const ROOT_DIR: &str = "/";
 const DB_PATH: &str = "/var/lib/pacman/";
 
 /// Attempt to find any match of a package in the syncdb.
-fn find_package_anywhere<'a>(
-    pkgname: &str,
-    pacman: &'a alpm::Alpm,
-) -> Result<Package<'a>, RebuildOrderError> {
+fn find_package_anywhere<'a>(pkgname: &str, pacman: &'a alpm::Alpm) -> Result<Package<'a>> {
     let dbs = pacman.syncdbs();
     for db in dbs {
         if let Ok(pkg) = db.pkg(pkgname) {
             return Ok(pkg);
         }
     }
-    Err(RebuildOrderError::PackageNotFound)
+    Err(anyhow!(RebuildOrderError::PackageNotFound))
 }
 
 /// Retrieve a HashMap of all reverse dependencies.
@@ -66,7 +64,7 @@ fn get_reverse_deps_map(pacman: &alpm::Alpm) -> HashMap<String, HashSet<String>>
 }
 
 /// Write a given DiGraph to a given file using a buffered writer.
-fn write_dotfile(filename: String, graph: DiGraph<&str, u16>) -> Result<(), RebuildOrderError> {
+fn write_dotfile(filename: String, graph: DiGraph<&str, u16>) -> Result<()> {
     let dotgraph = Dot::with_config(&graph, &[Config::EdgeNoLabel]);
     let file = File::create(filename)?;
     let mut bufw = BufWriter::new(file);
@@ -81,7 +79,7 @@ pub fn run(
     dbpath: Option<String>,
     repos: Vec<String>,
     dotfile: Option<String>,
-) -> anyhow::Result<String> {
+) -> Result<String> {
     let pacman = match dbpath {
         Some(path) => alpm::Alpm::new(ROOT_DIR, &path),
         None => alpm::Alpm::new(ROOT_DIR, DB_PATH),
