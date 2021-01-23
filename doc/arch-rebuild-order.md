@@ -27,7 +27,7 @@ Generating an image of the rebuild order of provided package(s):
 $ **arch-rebuild-order** -d linux-rebuild-order.dot linux
 
 
-$ dot -Tpng linux-rebuild-order.dot > linux-rebuild-order.pn
+$ dot -Tpng linux-rebuild-order.dot > linux-rebuild-order.png
 
 # BUGS
 
