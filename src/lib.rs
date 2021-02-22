@@ -91,18 +91,26 @@ pub fn run(
     }
 
     let reverse_deps_map = get_reverse_deps_map(&pacman);
+    let mut provides = Vec::new();
+    let mut provides_map = HashMap::new();
 
     for pkg in &pkgnames {
-        find_package_anywhere(&pkg, &pacman)?;
+        let repopkg = find_package_anywhere(&pkg, &pacman)?;
+        for provide in repopkg.provides() {
+            provides.push(provide.name());
+            provides_map.insert(provide.name(), repopkg.name());
+        }
     }
 
     let mut graph = DiGraph::<&str, u16>::new();
 
     let mut to_visit = VecDeque::new();
     let mut to_build = HashSet::new();
-    to_visit.extend(pkgnames.iter().map(|x| x.as_str()));
 
-    let mut cache_node = HashMap::new();
+    to_visit.extend(pkgnames.iter().map(|x| x.as_str()));
+    to_visit.extend(provides.iter());
+
+    let mut cache_node: HashMap<&str, petgraph::graph::NodeIndex> = HashMap::new();
 
     while !to_visit.is_empty() {
         let pkg = if let Some(pkg) = to_visit.pop_front() {
@@ -111,7 +119,12 @@ pub fn run(
             break;
         };
 
-        let root = *cache_node.entry(pkg).or_insert_with(|| graph.add_node(pkg));
+        // Resolve the provided package to the real package as provided packages are not real
+        // packages in the Arch Linux repository.
+        let rootpkg = provides_map.get(&pkg).unwrap_or(&pkg);
+        let root = *cache_node
+            .entry(rootpkg)
+            .or_insert_with(|| graph.add_node(rootpkg));
 
         if let Some(rev_deps_for_pkg) = reverse_deps_map.get(pkg) {
             if to_build.get(&pkg.to_string()).is_none() {
@@ -120,7 +133,7 @@ pub fn run(
 
             for rev_dep in rev_deps_for_pkg {
                 let depnode = *cache_node
-                    .entry(rev_dep)
+                    .entry(&rev_dep.as_str())
                     .or_insert_with(|| graph.add_node(rev_dep));
                 if !graph.contains_edge(root, depnode) {
                     graph.add_edge(root, depnode, 1);

@@ -5,7 +5,7 @@ pub mod fixtures;
 
 use fixtures::{
     dependency_cycle, dependency_depth, invalid_dbpath, multiple_deps, no_reverse_deps,
-    reverse_deps, reverse_make_deps, Package,
+    provides_make_depends, reverse_deps, reverse_make_deps, Package,
 };
 
 #[rstest]
@@ -60,6 +60,26 @@ fn test_reverse_make_deps(reverse_make_deps: (Vec<Package>, Option<String>, Vec<
         vec![pkgname.to_string()],
         reverse_make_deps.1,
         reverse_make_deps.2,
+        None,
+    )
+    .unwrap();
+    let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
+    assert_eq!(packages, res_pkgs);
+}
+
+/// Given a package 'testpkg1' which provides 'pkg1' where 'testpkg2' make depends on 'pkg1',
+/// the rebuild order should be 'testpkg1 testpkg2'
+#[rstest]
+fn test_provides_make_depends(
+    provides_make_depends: (Vec<Package>, Option<String>, Vec<String>, TempDir),
+) {
+    let packages = provides_make_depends.0;
+    let pkgname = &packages[0].name;
+
+    let res = arch_rebuild_order::run(
+        vec![pkgname.to_string()],
+        provides_make_depends.1,
+        provides_make_depends.2,
         None,
     )
     .unwrap();

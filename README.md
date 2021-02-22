@@ -18,13 +18,15 @@ cargo run opencolorio
 ## Algorithm
 
 Arch-rebuild-order uses the local syncdb to build a hashmap, mapping packages
-to their reverse (make) dependencies. It adds the provided pkgnames to the
-**to_visit** list and iterates over each entry, pops it to inspect and in turn
-adds all found reverse dependencies again to the **to_visit** list.  It repeats
-this cycle until the entire **to_visit** list is empty.
-
-During this iteration process a pkg node is created in a DiGraph and for all reverse dependencies
-of this package additional node are created and added as an edge of the parent pkg node.
+to their reverse (make) dependencies. The provided pkgnames are looked up in
+the syncdb and a hashmap is built of the package provides and the pkgname
+called **provides_map**. The **pkgnames** and **provides** are added to the
+**to_visit** list and this then starts the iteration over every entry in the
+list. During each iteration, the real package name is resolved if the provided
+package comes from provides using the **provides_map**, a graph node is created
+for the entry. For all reverse (make) dependencies of the entry, the dependency is added to
+the **to_visit** list, a new graph node is created and added as an edge of the
+pkg node. This repeats until the **to_visit** list is empty.
 
 ## DOT output
 
