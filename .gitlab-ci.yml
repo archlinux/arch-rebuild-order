@@ -4,27 +4,20 @@ before_script:
   - pacman -Syu --needed --noconfirm rust gcc
 
 stages:
-  - format
-  - clippy
-  - check
+  - lint
   - test
 
 format:
-  stage: format
+  stage: lint
   script:
     - cargo fmt --all -- --check
 
 clippy:
-  stage: clippy
+  stage: lint
   script:
     - cargo clippy --all -- -D warnings
-
-check:
-  stage: check
-  script:
-    - cargo check --all --verbose --release
 
 test:
   stage: test
   script:
-    - cargo test --all --verbose --release
+    - cargo test --all --release
