@@ -4,8 +4,8 @@ use tempfile::TempDir;
 pub mod fixtures;
 
 use fixtures::{
-    dependency_cycle, dependency_depth, invalid_dbpath, multiple_deps, no_reverse_deps,
-    provides_make_depends, reverse_deps, reverse_make_deps, Package,
+    dependency_cycle, dependency_depth, invalid_dbpath, multiple_deps, multiple_pkgnames,
+    no_reverse_deps, provides_make_depends, reverse_deps, reverse_make_deps, Package,
 };
 
 #[rstest]
@@ -141,4 +141,25 @@ fn test_dependency_cycle(dependency_cycle: (Vec<Package>, Option<String>, Vec<St
     .unwrap();
     let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
     assert_eq!(packages[0], res_pkgs[0]);
+}
+
+/// Given two packages names as input, with testpkg1 being a reverse dependency for testpkg2 and
+/// testpkg3 and testpkg4 being a dependency of testpkg2. Providing "testpkg1 testpkg2" should
+/// return "testpkg1 testpkg3 testpkg2 testpkg4"
+#[rstest]
+fn test_multiple_pkgnames(multiple_pkgnames: (Vec<Package>, Option<String>, Vec<String>, TempDir)) {
+    let packages = multiple_pkgnames.0;
+    let pkgname1 = &packages[0];
+    let pkgname2 = &packages[1];
+
+    let res = arch_rebuild_order::run(
+        vec![pkgname1.to_string(), pkgname2.to_string()],
+        multiple_pkgnames.1,
+        multiple_pkgnames.2,
+        None,
+    )
+    .unwrap();
+    let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
+    let expected = vec!["testpkg1", "testpkg3", "testpkg2", "testpkg4"];
+    assert_eq!(res_pkgs, expected);
 }

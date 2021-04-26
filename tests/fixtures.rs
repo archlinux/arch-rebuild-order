@@ -308,3 +308,39 @@ pub fn dependency_cycle() -> (Vec<Package>, Option<String>, Vec<String>, TempDir
 
     (packages, Some(dbpath), vec![reponame.to_string()], tempdir)
 }
+
+#[fixture]
+pub fn multiple_pkgnames() -> (Vec<Package>, Option<String>, Vec<String>, TempDir) {
+    let testpkg = Package::new("testpkg1", "testpkg1", "1-1", vec![], vec![], vec![]);
+    let testpkg2 = Package::new(
+        "testpkg2",
+        "testpkg2",
+        "1-1",
+        vec![testpkg.name.clone()],
+        vec![],
+        vec![],
+    );
+    let testpkg3 = Package::new(
+        "testpkg3",
+        "testpkg3",
+        "1-1",
+        vec![testpkg.name.clone()],
+        vec![],
+        vec![],
+    );
+    let testpkg4 = Package::new(
+        "testpkg4",
+        "testpkg4",
+        "1-1",
+        vec![testpkg2.name.clone()],
+        vec![],
+        vec![],
+    );
+
+    let packages = vec![testpkg, testpkg2, testpkg3, testpkg4];
+
+    let reponame = "test";
+    let (tempdir, dbpath) = init_repodb(reponame.to_string(), packages.clone());
+
+    (packages, Some(dbpath), vec![reponame.to_string()], tempdir)
+}
