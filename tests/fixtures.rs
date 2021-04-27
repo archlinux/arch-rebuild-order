@@ -301,8 +301,6 @@ pub fn dependency_cycle() -> (Vec<Package>, Option<String>, Vec<String>, TempDir
         vec![],
         vec![],
     );
-    dbg!(testpkg.clone());
-    dbg!(testpkg2.clone());
     let packages = vec![testpkg, testpkg2];
 
     let reponame = "test";
