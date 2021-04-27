@@ -131,7 +131,10 @@ pub fn run(
                 to_visit.extend(rev_deps_for_pkg.iter().map(|x| x.as_str()));
             }
 
-            for rev_dep in rev_deps_for_pkg {
+            let mut rev_deps_for_pkg_vec = rev_deps_for_pkg.iter().collect::<Vec<_>>();
+            rev_deps_for_pkg_vec.sort();
+
+            for rev_dep in rev_deps_for_pkg_vec {
                 let depnode = *cache_node
                     .entry(&rev_dep.as_str())
                     .or_insert_with(|| graph.add_node(rev_dep));
