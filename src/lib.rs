@@ -143,16 +143,19 @@ pub fn run(
         };
     }
 
+    // Visit nodes in our graph in a depth-first-search adding nodes in post-order. The provided
+    // packages are added first to the stack.
     let mut rebuild_order_packages = Vec::new();
-    for pkg in &pkgnames {
-        if let Some(pkgname) = cache_node.get(pkg.as_str()) {
-            let mut bfs = DfsPostOrder::new(&graph, *pkgname);
+    let mut bfs = DfsPostOrder::empty(&graph);
+    bfs.stack.extend(
+        pkgnames
+            .iter()
+            .filter_map(|pkg| cache_node.get(pkg.as_str())),
+    );
 
-            while let Some(nx) = bfs.next(&graph) {
-                let node = graph[nx];
-                rebuild_order_packages.push(node);
-            }
-        }
+    while let Some(nx) = bfs.next(&graph) {
+        let node = graph[nx];
+        rebuild_order_packages.push(node);
     }
 
     // Reverse the rebuild order as DfsPostOrder starts with the first pkgname and therefore
