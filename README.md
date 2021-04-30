@@ -4,10 +4,10 @@ A CLI tool to determine the rebuild order of provided package(s).
 
 ## Usage
 
-To show the rebuild order of opencolorio
+To show the rebuild order of opencolorio1
 
 ```
-cargo run opencolorio
+cargo run opencolorio1
 ```
 
 ## Requirements
@@ -33,7 +33,7 @@ pkg node. This repeats until the **to_visit** list is empty.
 Arch-rebuild-order can generate a DOT file of the rebuild order for a given package.
 
 ```
-cargo run -- -d opencolorio.dot opencolorio
+cargo run -- -d opencolorio.dot opencolorio1
 dot -Tpng opencolorio.dot > opencolorio.png
 ```
 
