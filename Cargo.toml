@@ -15,7 +15,7 @@ publish = false
 default-run = "arch-rebuild-order"
 
 [dependencies]
-alpm = "1"
+alpm = "2"
 petgraph = "0.5"
 structopt = "0.3"
 thiserror = "1.0.23"
