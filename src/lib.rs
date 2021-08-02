@@ -95,7 +95,7 @@ pub fn run(
     let mut provides_map = HashMap::new();
 
     for pkg in &pkgnames {
-        let repopkg = find_package_anywhere(&pkg, &pacman)?;
+        let repopkg = find_package_anywhere(pkg, &pacman)?;
         for provide in repopkg.provides() {
             provides.push(provide.name());
             provides_map.insert(provide.name(), repopkg.name());
@@ -136,7 +136,7 @@ pub fn run(
 
             for rev_dep in rev_deps_for_pkg_vec {
                 let depnode = *cache_node
-                    .entry(&rev_dep.as_str())
+                    .entry(rev_dep.as_str())
                     .or_insert_with(|| graph.add_node(rev_dep));
                 if !graph.contains_edge(root, depnode) {
                     graph.add_edge(root, depnode, 1);
