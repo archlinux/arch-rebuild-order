@@ -15,16 +15,16 @@ publish = false
 default-run = "arch-rebuild-order"
 
 [dependencies]
-alpm = "2"
-petgraph = "0.5"
-structopt = "0.3"
-thiserror = "1.0.23"
-anyhow = "1.0.38"
+alpm = "2.0.4"
+petgraph = "0.5.1"
+structopt = "0.3.21"
+thiserror = "1.0.25"
+anyhow = "1.0.40"
 
 [dev-dependencies]
-rstest = "0.6"
-tar = "0.4"
-tempfile = "3"
+rstest = "0.10.0"
+tar = "0.4.35"
+tempfile = "3.2.0"
 
 
 [profile.release]
