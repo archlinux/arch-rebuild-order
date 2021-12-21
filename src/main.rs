@@ -4,7 +4,13 @@ use arch_rebuild_order::args::Args;
 
 fn main() {
     let args = Args::from_args();
-    match arch_rebuild_order::run(args.pkgnames, args.dbpath, args.repos, args.dotfile) {
+    match arch_rebuild_order::run(
+        args.pkgnames,
+        args.dbpath,
+        args.repos,
+        args.dotfile,
+        args.no_reverse_depends,
+    ) {
         Ok(output) => {
             println!("{output}");
             std::process::exit(0);

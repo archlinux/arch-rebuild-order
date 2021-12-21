@@ -16,6 +16,8 @@ Generate a rebuild order for given packages using pacman's local syncdb's.
 
 **--repos=REPOS** the repositories to retrieve the package information from
 
+**--no-reverse-depends** only use pkgnames provided as input to calculate the build order, does not expand reverse (make)dependencies
+
 **-V, --version** prints version information
 
 **-h, --help** prints help information
