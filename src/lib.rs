@@ -79,6 +79,7 @@ pub fn run(
     dbpath: Option<String>,
     repos: Vec<String>,
     dotfile: Option<String>,
+    no_reverse_depends: bool,
 ) -> Result<String> {
     let pacman = match dbpath {
         Some(path) => alpm::Alpm::new(ROOT_DIR, &path),
@@ -165,15 +166,14 @@ pub fn run(
     // shows it as last package
     rebuild_order_packages.reverse();
 
-    let mut output = String::new();
-    for elem in rebuild_order_packages.iter() {
-        output.push_str(elem);
-        output.push(' ');
-    }
+    // We only retain the packages we want to when using `--no-reverse_depends`
+    // This logic is hard to parse because retain is an inverse filter,
+    // thus we use the negated form of: no_reverse_depends && !pkgnames.contains(&pkg.to_string()
+    rebuild_order_packages.retain(|pkg| !no_reverse_depends || pkgnames.contains(&pkg.to_string()));
 
     if let Some(filename) = dotfile {
         write_dotfile(filename, graph)?;
     }
 
-    Ok(output)
+    Ok(rebuild_order_packages.join(" "))
 }

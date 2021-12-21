@@ -22,4 +22,8 @@ pub struct Args {
     /// Write a dotfile into the given file
     #[structopt(short, long)]
     pub dotfile: Option<String>,
+
+    /// Only use the pkgnames provided as input
+    #[structopt(long)]
+    pub no_reverse_depends: bool,
 }

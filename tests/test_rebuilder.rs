@@ -13,7 +13,7 @@ use fixtures::{
 fn test_invalid_dbpath(invalid_dbpath: (Vec<String>, Option<String>)) {
     let pkgnames = invalid_dbpath.0;
     let dbpath = invalid_dbpath.1;
-    arch_rebuild_order::run(pkgnames, dbpath, vec![], None).unwrap();
+    arch_rebuild_order::run(pkgnames, dbpath, vec![], None, false).unwrap();
 }
 
 /// A package without any reverse dependencies should only print the given package
@@ -26,6 +26,7 @@ fn test_no_reverse_deps(no_reverse_deps: (Vec<Package>, Option<String>, Vec<Stri
         no_reverse_deps.1,
         no_reverse_deps.2,
         None,
+        false,
     )
     .unwrap();
     assert_eq!(packages[0], res.trim());
@@ -43,6 +44,7 @@ fn test_reverse_deps(reverse_deps: (Vec<String>, Option<String>, Vec<String>, Te
         reverse_deps.1,
         reverse_deps.2,
         None,
+        false,
     )
     .unwrap();
     let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
@@ -61,6 +63,7 @@ fn test_reverse_make_deps(reverse_make_deps: (Vec<Package>, Option<String>, Vec<
         reverse_make_deps.1,
         reverse_make_deps.2,
         None,
+        false,
     )
     .unwrap();
     let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
@@ -81,6 +84,7 @@ fn test_provides_make_depends(
         provides_make_depends.1,
         provides_make_depends.2,
         None,
+        false,
     )
     .unwrap();
     let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
@@ -99,6 +103,7 @@ fn test_multiple_deps(multiple_deps: (Vec<Package>, Option<String>, Vec<String>,
         multiple_deps.1,
         multiple_deps.2,
         None,
+        false,
     )
     .unwrap();
     let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
@@ -117,6 +122,7 @@ fn test_dependency_depth(dependency_depth: (Vec<Package>, Option<String>, Vec<St
         dependency_depth.1,
         dependency_depth.2,
         None,
+        false,
     )
     .unwrap();
     let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
@@ -137,6 +143,7 @@ fn test_dependency_cycle(dependency_cycle: (Vec<Package>, Option<String>, Vec<St
         dependency_cycle.1,
         dependency_cycle.2,
         None,
+        false,
     )
     .unwrap();
     let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
@@ -157,9 +164,35 @@ fn test_multiple_pkgnames(multiple_pkgnames: (Vec<Package>, Option<String>, Vec<
         multiple_pkgnames.1,
         multiple_pkgnames.2,
         None,
+        false,
     )
     .unwrap();
     let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
     let expected = vec!["testpkg1", "testpkg3", "testpkg2", "testpkg4"];
+    assert_eq!(res_pkgs, expected);
+}
+
+/// Given two packages names as input, with testpkg1 being a reverse dependency for testpkg2 and
+/// testpkg3 and testpkg4 being a dependency of testpkg2. Providing "testpkg1 testpkg2" in
+/// combination with the no reverse dependenies flag should
+/// return "testpkg1 testpkg2"
+#[rstest]
+fn test_no_reverse_deps_flag(
+    multiple_pkgnames: (Vec<Package>, Option<String>, Vec<String>, TempDir),
+) {
+    let packages = multiple_pkgnames.0;
+    let pkgname1 = &packages[0];
+    let pkgname2 = &packages[1];
+
+    let res = arch_rebuild_order::run(
+        vec![pkgname1.to_string(), pkgname2.to_string()],
+        multiple_pkgnames.1,
+        multiple_pkgnames.2,
+        None,
+        true,
+    )
+    .unwrap();
+    let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
+    let expected = vec!["testpkg1", "testpkg2"];
     assert_eq!(res_pkgs, expected);
 }
