@@ -2,7 +2,7 @@
 name = "arch-rebuild-order"
 version = "0.1.0"
 authors = ["Jelle van der Waa <jelle@archlinux.org>"]
-edition = "2018"
+edition = "2021"
 description = "A CLI tool to determine the rebuild order of provided package(s)."
 documentation = "https://gitlab.archlinux.org/archlinux/arch-rebuild-order"
 readme = "README.md"
