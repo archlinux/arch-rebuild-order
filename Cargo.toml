@@ -17,9 +17,10 @@ default-run = "arch-rebuild-order"
 [dependencies]
 alpm = "2.2.1"
 petgraph = "0.6.0"
-structopt = "0.3.25"
+clap = { version = "4", features = ["derive"] }
 thiserror = "1.0.30"
 anyhow = "1.0.52"
+clap_complete = "4.0.7"
 
 [dev-dependencies]
 rstest = "0.12.0"

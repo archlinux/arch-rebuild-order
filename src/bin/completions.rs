@@ -1,16 +1,20 @@
-use std::{env, str::FromStr};
-use structopt::clap::Shell;
-use structopt::StructOpt;
+use clap::{CommandFactory, ValueEnum};
+use clap_complete::Shell;
+use std::env;
 
 use arch_rebuild_order::args::Args;
 
-fn main() {
+fn main() -> anyhow::Result<()> {
     //  https://doc.rust-lang.org/cargo/reference/environment-variables.html
     let out_dir = env::var_os("OUT_DIR").expect("out dir not set");
-    let mut app = Args::clap();
-    for variant in &Shell::variants() {
-        let variant = Shell::from_str(variant).unwrap();
-        app.gen_completions("arch-rebuild-order", variant, &out_dir);
+    for variant in Shell::value_variants() {
+        clap_complete::generate_to(
+            *variant,
+            &mut Args::command(),
+            "arch-rebuild-order",
+            &out_dir,
+        )?;
     }
     println!("completion scripts generated in {:?}", out_dir);
+    Ok(())
 }

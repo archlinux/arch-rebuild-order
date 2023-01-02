@@ -1,29 +1,27 @@
-use structopt::StructOpt;
-
-#[derive(Debug, StructOpt)]
-#[structopt(name = "arch-rebuild-order", about, author)]
+#[derive(Debug, clap::Parser)]
+#[clap(name = "arch-rebuild-order", about, author)]
 pub struct Args {
     /// List of input packages
-    #[structopt(min_values = 1, required = true)]
+    #[arg(required = true)]
     pub pkgnames: Vec<String>,
 
     /// Repositories
-    #[structopt(
+    #[arg(
         default_value = "core,extra,community,multilib",
         long,
-        use_delimiter = true
+        use_value_delimiter = true
     )]
     pub repos: Vec<String>,
 
     /// The path to the pacman database, default ( /var/lib/pacman )
-    #[structopt(long)]
+    #[arg(long)]
     pub dbpath: Option<String>,
 
     /// Write a dotfile into the given file
-    #[structopt(short, long)]
+    #[arg(short, long)]
     pub dotfile: Option<String>,
 
     /// Only use the pkgnames provided as input
-    #[structopt(long)]
+    #[arg(long)]
     pub no_reverse_depends: bool,
 }

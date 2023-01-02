@@ -1,9 +1,9 @@
-use structopt::StructOpt;
+use clap::Parser;
 
 use arch_rebuild_order::args::Args;
 
 fn main() {
-    let args = Args::from_args();
+    let args = Args::parse();
     match arch_rebuild_order::run(
         args.pkgnames,
         args.dbpath,
