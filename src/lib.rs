@@ -26,7 +26,7 @@ fn find_package_anywhere<'a>(pkgname: &str, pacman: &'a alpm::Alpm) -> Result<Pa
 }
 
 /// Retrieve a HashMap of all reverse dependencies.
-fn get_reverse_deps_map(pacman: &alpm::Alpm) -> HashMap<String, HashSet<String>> {
+fn get_reverse_deps_map(pacman: &alpm::Alpm, with_check_depends: bool) -> HashMap<String, HashSet<String>> {
     let mut reverse_deps: HashMap<String, HashSet<String>> = HashMap::new();
     let dbs = pacman.syncdbs();
 
@@ -57,6 +57,21 @@ fn get_reverse_deps_map(pacman: &alpm::Alpm) -> HashMap<String, HashSet<String>>
                         modify
                     });
             }
+
+            if with_check_depends {
+                for dep in pkg.checkdepends() {
+                    reverse_deps
+                        .entry(dep.name().to_string())
+                        .and_modify(|e| {
+                            e.insert(pkg.name().to_string());
+                        })
+                        .or_insert_with(|| {
+                            let mut modify = HashSet::new();
+                            modify.insert(pkg.name().to_string());
+                            modify
+                        });
+                }
+            }
         }
     }
 
@@ -80,6 +95,7 @@ pub fn run(
     repos: Vec<String>,
     dotfile: Option<String>,
     no_reverse_depends: bool,
+    with_check_depends: bool,
 ) -> Result<String> {
     let pacman = match dbpath {
         Some(path) => alpm::Alpm::new(ROOT_DIR, &path),
@@ -91,7 +107,7 @@ pub fn run(
         let _repo = pacman.register_syncdb(repo, SigLevel::DATABASE_OPTIONAL);
     }
 
-    let reverse_deps_map = get_reverse_deps_map(&pacman);
+    let reverse_deps_map = get_reverse_deps_map(&pacman, with_check_depends);
     let mut provides = Vec::new();
     let mut provides_map = HashMap::new();
 

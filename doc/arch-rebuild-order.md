@@ -18,6 +18,8 @@ Generate a rebuild order for given packages using pacman's local syncdb's.
 
 **--no-reverse-depends** only use pkgnames provided as input to calculate the build order, does not expand reverse (make)dependencies
 
+**--with-check-depends** include checkdependencies in the rebuild order
+
 **-V, --version** prints version information
 
 **-h, --help** prints help information

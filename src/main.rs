@@ -10,6 +10,7 @@ fn main() {
         args.repos,
         args.dotfile,
         args.no_reverse_depends,
+        args.with_check_depends,
     ) {
         Ok(output) => {
             println!("{output}");

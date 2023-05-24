@@ -24,4 +24,8 @@ pub struct Args {
     /// Only use the pkgnames provided as input
     #[arg(long)]
     pub no_reverse_depends: bool,
+
+    /// Include checkdepends
+    #[arg(long)]
+    pub with_check_depends: bool,
 }
