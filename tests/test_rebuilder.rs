@@ -5,7 +5,8 @@ pub mod fixtures;
 
 use fixtures::{
     dependency_cycle, dependency_depth, invalid_dbpath, multiple_deps, multiple_pkgnames,
-    no_reverse_deps, provides_make_depends, reverse_deps, reverse_make_deps, Package,
+    no_reverse_deps, provides_make_depends, reverse_deps, reverse_make_deps,
+    reverse_check_deps, Package,
 };
 
 #[rstest]
@@ -13,7 +14,7 @@ use fixtures::{
 fn test_invalid_dbpath(invalid_dbpath: (Vec<String>, Option<String>)) {
     let pkgnames = invalid_dbpath.0;
     let dbpath = invalid_dbpath.1;
-    arch_rebuild_order::run(pkgnames, dbpath, vec![], None, false).unwrap();
+    arch_rebuild_order::run(pkgnames, dbpath, vec![], None, false, false).unwrap();
 }
 
 /// A package without any reverse dependencies should only print the given package
@@ -26,6 +27,7 @@ fn test_no_reverse_deps(no_reverse_deps: (Vec<Package>, Option<String>, Vec<Stri
         no_reverse_deps.1,
         no_reverse_deps.2,
         None,
+        false,
         false,
     )
     .unwrap();
@@ -44,6 +46,7 @@ fn test_reverse_deps(reverse_deps: (Vec<String>, Option<String>, Vec<String>, Te
         reverse_deps.1,
         reverse_deps.2,
         None,
+        false,
         false,
     )
     .unwrap();
@@ -64,6 +67,47 @@ fn test_reverse_make_deps(reverse_make_deps: (Vec<Package>, Option<String>, Vec<
         reverse_make_deps.2,
         None,
         false,
+        false,
+    )
+    .unwrap();
+    let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
+    assert_eq!(packages, res_pkgs);
+}
+
+/// Given a package 'testpkg1' with a reverse check dependency on 'testpkg2', the rebuild order
+/// should be 'testpkg1' as we did not pass --with-check-depends
+#[rstest]
+fn test_reverse_check_deps_default(reverse_check_deps: (Vec<Package>, Option<String>, Vec<String>, TempDir)) {
+    let packages = reverse_check_deps.0;
+    let pkgname = &packages[0].name;
+
+    let res = arch_rebuild_order::run(
+        vec![pkgname.to_string()],
+        reverse_check_deps.1,
+        reverse_check_deps.2,
+        None,
+        false,
+        false,
+    )
+    .unwrap();
+    let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
+    assert_eq!(vec![pkgname.to_string()], res_pkgs);
+}
+
+/// Given a package 'testpkg1' with a reverse check dependency on 'testpkg2', the rebuild order
+/// should be 'testpkg1 testpkg2'
+#[rstest]
+fn test_reverse_check_deps(reverse_check_deps: (Vec<Package>, Option<String>, Vec<String>, TempDir)) {
+    let packages = reverse_check_deps.0;
+    let pkgname = &packages[0].name;
+
+    let res = arch_rebuild_order::run(
+        vec![pkgname.to_string()],
+        reverse_check_deps.1,
+        reverse_check_deps.2,
+        None,
+        false,
+        true,
     )
     .unwrap();
     let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
@@ -85,6 +129,7 @@ fn test_provides_make_depends(
         provides_make_depends.2,
         None,
         false,
+        false,
     )
     .unwrap();
     let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
@@ -104,6 +149,7 @@ fn test_multiple_deps(multiple_deps: (Vec<Package>, Option<String>, Vec<String>,
         multiple_deps.2,
         None,
         false,
+        false,
     )
     .unwrap();
     let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
@@ -122,6 +168,7 @@ fn test_dependency_depth(dependency_depth: (Vec<Package>, Option<String>, Vec<St
         dependency_depth.1,
         dependency_depth.2,
         None,
+        false,
         false,
     )
     .unwrap();
@@ -144,6 +191,7 @@ fn test_dependency_cycle(dependency_cycle: (Vec<Package>, Option<String>, Vec<St
         dependency_cycle.2,
         None,
         false,
+        false,
     )
     .unwrap();
     let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
@@ -164,6 +212,7 @@ fn test_multiple_pkgnames(multiple_pkgnames: (Vec<Package>, Option<String>, Vec<
         multiple_pkgnames.1,
         multiple_pkgnames.2,
         None,
+        false,
         false,
     )
     .unwrap();
@@ -190,6 +239,7 @@ fn test_no_reverse_deps_flag(
         multiple_pkgnames.2,
         None,
         true,
+        false,
     )
     .unwrap();
     let res_pkgs: Vec<&str> = res.trim().split_ascii_whitespace().collect();
