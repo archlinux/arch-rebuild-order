@@ -26,7 +26,10 @@ fn find_package_anywhere<'a>(pkgname: &str, pacman: &'a alpm::Alpm) -> Result<Pa
 }
 
 /// Retrieve a HashMap of all reverse dependencies.
-fn get_reverse_deps_map(pacman: &alpm::Alpm, with_check_depends: bool) -> HashMap<String, HashSet<String>> {
+fn get_reverse_deps_map(
+    pacman: &alpm::Alpm,
+    with_check_depends: bool,
+) -> HashMap<String, HashSet<String>> {
     let mut reverse_deps: HashMap<String, HashSet<String>> = HashMap::new();
     let dbs = pacman.syncdbs();
 

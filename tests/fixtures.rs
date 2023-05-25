@@ -167,7 +167,15 @@ pub fn invalid_dbpath() -> (Vec<String>, Option<String>) {
 
 #[fixture]
 pub fn no_reverse_deps() -> (Vec<Package>, Option<String>, Vec<String>, TempDir) {
-    let testpkg = Package::new("testpkg1", "testpkg1", "1.0-1", vec![], vec![], vec![], vec![]);
+    let testpkg = Package::new(
+        "testpkg1",
+        "testpkg1",
+        "1.0-1",
+        vec![],
+        vec![],
+        vec![],
+        vec![],
+    );
     let packages = vec![testpkg];
 
     let reponame = "test";
@@ -178,7 +186,15 @@ pub fn no_reverse_deps() -> (Vec<Package>, Option<String>, Vec<String>, TempDir)
 
 #[fixture]
 pub fn reverse_deps() -> (Vec<String>, Option<String>, Vec<String>, TempDir) {
-    let testpkg = Package::new("testpkg1", "testpkg1", "1-1", vec![], vec![], vec![], vec![]);
+    let testpkg = Package::new(
+        "testpkg1",
+        "testpkg1",
+        "1-1",
+        vec![],
+        vec![],
+        vec![],
+        vec![],
+    );
     let testpkg2 = Package::new(
         "testpkg2",
         "testpkg2",
@@ -199,7 +215,15 @@ pub fn reverse_deps() -> (Vec<String>, Option<String>, Vec<String>, TempDir) {
 
 #[fixture]
 pub fn multiple_deps() -> (Vec<Package>, Option<String>, Vec<String>, TempDir) {
-    let testpkg = Package::new("testpkg1", "testpkg1", "1.0-1", vec![], vec![], vec![], vec![]);
+    let testpkg = Package::new(
+        "testpkg1",
+        "testpkg1",
+        "1.0-1",
+        vec![],
+        vec![],
+        vec![],
+        vec![],
+    );
     let testpkg2 = Package::new(
         "testpkg2",
         "testpkg2",
@@ -228,7 +252,15 @@ pub fn multiple_deps() -> (Vec<Package>, Option<String>, Vec<String>, TempDir) {
 
 #[fixture]
 pub fn reverse_make_deps() -> (Vec<Package>, Option<String>, Vec<String>, TempDir) {
-    let testpkg = Package::new("testpkg1", "testpkg1", "1-1", vec![], vec![], vec![], vec![]);
+    let testpkg = Package::new(
+        "testpkg1",
+        "testpkg1",
+        "1-1",
+        vec![],
+        vec![],
+        vec![],
+        vec![],
+    );
     let testpkg2 = Package::new(
         "testpkg2",
         "testpkg2",
@@ -248,7 +280,15 @@ pub fn reverse_make_deps() -> (Vec<Package>, Option<String>, Vec<String>, TempDi
 
 #[fixture]
 pub fn reverse_check_deps() -> (Vec<Package>, Option<String>, Vec<String>, TempDir) {
-    let testpkg = Package::new("testpkg1", "testpkg1", "1-1", vec![], vec![], vec![], vec![]);
+    let testpkg = Package::new(
+        "testpkg1",
+        "testpkg1",
+        "1-1",
+        vec![],
+        vec![],
+        vec![],
+        vec![],
+    );
     let testpkg2 = Package::new(
         "testpkg2",
         "testpkg2",
@@ -296,7 +336,15 @@ pub fn provides_make_depends() -> (Vec<Package>, Option<String>, Vec<String>, Te
 
 #[fixture]
 pub fn dependency_depth() -> (Vec<Package>, Option<String>, Vec<String>, TempDir) {
-    let testpkg = Package::new("testpkg1", "testpkg1", "1-1", vec![], vec![], vec![], vec![]);
+    let testpkg = Package::new(
+        "testpkg1",
+        "testpkg1",
+        "1-1",
+        vec![],
+        vec![],
+        vec![],
+        vec![],
+    );
     let testpkg2 = Package::new(
         "testpkg2",
         "testpkg2",
@@ -353,7 +401,15 @@ pub fn dependency_cycle() -> (Vec<Package>, Option<String>, Vec<String>, TempDir
 
 #[fixture]
 pub fn multiple_pkgnames() -> (Vec<Package>, Option<String>, Vec<String>, TempDir) {
-    let testpkg = Package::new("testpkg1", "testpkg1", "1-1", vec![], vec![], vec![], vec![]);
+    let testpkg = Package::new(
+        "testpkg1",
+        "testpkg1",
+        "1-1",
+        vec![],
+        vec![],
+        vec![],
+        vec![],
+    );
     let testpkg2 = Package::new(
         "testpkg2",
         "testpkg2",

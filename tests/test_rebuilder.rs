@@ -5,8 +5,8 @@ pub mod fixtures;
 
 use fixtures::{
     dependency_cycle, dependency_depth, invalid_dbpath, multiple_deps, multiple_pkgnames,
-    no_reverse_deps, provides_make_depends, reverse_deps, reverse_make_deps,
-    reverse_check_deps, Package,
+    no_reverse_deps, provides_make_depends, reverse_check_deps, reverse_deps, reverse_make_deps,
+    Package,
 };
 
 #[rstest]
@@ -77,7 +77,9 @@ fn test_reverse_make_deps(reverse_make_deps: (Vec<Package>, Option<String>, Vec<
 /// Given a package 'testpkg1' with a reverse check dependency on 'testpkg2', the rebuild order
 /// should be 'testpkg1' as we did not pass --with-check-depends
 #[rstest]
-fn test_reverse_check_deps_default(reverse_check_deps: (Vec<Package>, Option<String>, Vec<String>, TempDir)) {
+fn test_reverse_check_deps_default(
+    reverse_check_deps: (Vec<Package>, Option<String>, Vec<String>, TempDir),
+) {
     let packages = reverse_check_deps.0;
     let pkgname = &packages[0].name;
 
@@ -97,7 +99,9 @@ fn test_reverse_check_deps_default(reverse_check_deps: (Vec<Package>, Option<Str
 /// Given a package 'testpkg1' with a reverse check dependency on 'testpkg2', the rebuild order
 /// should be 'testpkg1 testpkg2'
 #[rstest]
-fn test_reverse_check_deps(reverse_check_deps: (Vec<Package>, Option<String>, Vec<String>, TempDir)) {
+fn test_reverse_check_deps(
+    reverse_check_deps: (Vec<Package>, Option<String>, Vec<String>, TempDir),
+) {
     let packages = reverse_check_deps.0;
     let pkgname = &packages[0].name;
 
