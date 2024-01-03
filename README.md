@@ -39,7 +39,7 @@ dot -Tpng opencolorio.dot > opencolorio.png
 
 ## Limitations
 
-* `testing` and `community-testing` repositories are not included.
+* `testing` and `extra-testing` repositories are not included.
 * Arch-rebuild-order expects an up-to-date syncdb and does not provide warning if it is not.
 
 ## Completions

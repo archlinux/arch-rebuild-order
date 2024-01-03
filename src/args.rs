@@ -7,7 +7,7 @@ pub struct Args {
 
     /// Repositories
     #[arg(
-        default_value = "core,extra,community,multilib",
+        default_value = "core,extra,multilib",
         long,
         use_value_delimiter = true
     )]
