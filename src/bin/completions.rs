@@ -11,7 +11,7 @@ fn main() -> anyhow::Result<()> {
         clap_complete::generate_to(
             *variant,
             &mut Args::command(),
-            "arch-rebuild-order",
+            env!("CARGO_PKG_NAME"),
             &out_dir,
         )?;
     }
