@@ -15,7 +15,7 @@ const ROOT_DIR: &str = "/";
 const DB_PATH: &str = "/var/lib/pacman/";
 
 /// Attempt to find any match of a package in the syncdb.
-fn find_package_anywhere<'a>(pkgname: &str, pacman: &'a alpm::Alpm) -> Result<Package<'a>> {
+fn find_package_anywhere<'a>(pkgname: &str, pacman: &'a alpm::Alpm) -> Result<&'a Package> {
     let dbs = pacman.syncdbs();
     for db in dbs {
         if let Ok(pkg) = db.pkg(pkgname) {
