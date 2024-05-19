@@ -147,7 +147,7 @@ pub fn run(
             .or_insert_with(|| graph.add_node(rootpkg));
 
         if let Some(rev_deps_for_pkg) = reverse_deps_map.get(pkg) {
-            if to_build.get(&pkg.to_string()).is_none() {
+            if !to_build.contains(&pkg.to_string()) {
                 to_visit.extend(rev_deps_for_pkg.iter().map(|x| x.as_str()));
             }
 
