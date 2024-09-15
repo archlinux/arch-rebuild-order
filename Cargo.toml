@@ -15,7 +15,7 @@ publish = false
 default-run = "arch-rebuild-order"
 
 [dependencies]
-alpm = "3.0"
+alpm = "4.0"
 petgraph = "0.6.0"
 clap = { version = "4", features = ["derive"] }
 thiserror = "1.0.30"
@@ -23,7 +23,7 @@ anyhow = "1.0.52"
 clap_complete = "4.0.7"
 
 [dev-dependencies]
-rstest = "0.12.0"
+rstest = "0.22.0"
 tar = "0.4.38"
 tempfile = "3.3.0"
 
